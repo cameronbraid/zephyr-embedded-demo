@@ -4,11 +4,11 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.File;
 import java.nio.file.Files;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
-import java.util.Objects;
 
 import org.assertj.core.api.Assertions;
 import org.junit.Test;
@@ -45,9 +45,6 @@ public class ZephyrTest {
       CountDownLatch l = new CountDownLatch(1);
       zephyr.getKernel().addEventListener((type,event) -> {
         failed.set(true);
-        // System.out.println(type);
-        // System.out.println(        event.getClass()
-        // System.out.println(event.getTarget());
         l.countDown();
       },  ModuleEvents.INSTALL_FAILED, ModuleEvents.RESOLUTION_FAILED, ModuleEvents.START_FAILED);
 
@@ -55,13 +52,8 @@ public class ZephyrTest {
         l.countDown();
       },  ModuleEvents.STARTED);
 
-      // cater for differing cwd : vsode in '/zephyr' and mvn in '/'
-      var path = new File("zephyr/target/plugins/").exists() ? "zephyr/target/plugins/" : "target/plugins/"; 
-
-      // var api = new File(path + "zephyr-embedded-demo-api.war").toURI().toURL();
       var api = MavenFile.providedPluginJar("drivenow:zephyr-embedded-demo-api:0.0.0").toURI().toURL();
-      var plugin = new File(path + "zephyr-embedded-demo-plugin.war").toURI().toURL();
-      // var jackson = new File("/home/cameronbraid/.m2/repository/drivenow/drivenow-jackson-plugin/1.0.0/drivenow-jackson-plugin-1.0.0.war").toURI().toURL();
+      var plugin = MavenFile.moduleFile("zerphyr", "plugins", "zephyr-embedded-demo-plugin.war").toURI().toURL();
 
       zephyr.install(api, plugin);
 

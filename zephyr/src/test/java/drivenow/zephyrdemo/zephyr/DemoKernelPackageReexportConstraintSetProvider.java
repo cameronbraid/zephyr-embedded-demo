@@ -13,9 +13,7 @@ public class DemoKernelPackageReexportConstraintSetProvider implements KernelPac
 
   @Override
   public Set<String> getPackages() {
-    // return Set.of("drivenow.zephyrdemo.test", "drivenow.zephyrdemo.pluginapi.*");
-    // return Set.of( "drivenow.zephyrdemo.pluginapi.*");
-    return Set.of();
+    return Set.of("drivenow.zephyrdemo.test", "drivenow.zephyrdemo.pluginapi.*");
   }
 
   @Override
