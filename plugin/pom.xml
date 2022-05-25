@@ -37,7 +37,6 @@
       </plugin>
 
 
-
       <plugin>
         <artifactId>maven-assembly-plugin</artifactId>
         <version>3.3.0</version>
@@ -88,11 +87,23 @@
       <scope>provided</scope>
     </dependency>
 
+   
+    <dependency>
+      <groupId>ch.qos.logback</groupId>
+      <artifactId>logback-classic</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+    </dependency>
+
+    
   </dependencies>
 
   <dependencyManagement>
     <dependencies>
-     
+
       <dependency>
         <groupId>org.springframework.data</groupId>
         <artifactId>spring-data-bom</artifactId>
@@ -112,5 +123,5 @@
 
     </dependencies>
   </dependencyManagement>
-  
+
 </project>

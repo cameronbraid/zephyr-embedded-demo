@@ -1,8 +1,6 @@
-package drivenow.zephyrdemo.plugin;
-
-import io.zephyr.api.ModuleActivator;
-import io.zephyr.api.ModuleContext;
+package drivenow.zephyrdemo.pluginapi;
 
 public interface PluginApi {
   public String concat(String a, String b);
+  public String joinName(Name name);
 }
