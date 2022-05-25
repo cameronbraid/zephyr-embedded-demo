@@ -1,1 +1,1 @@
-mvn clean install -pl .,zephyr-bom,api,plugin && mvn test -pl zephyr
+mvn clean install -pl .,zephyr-bom,api,plugin && while mvn test -pl zephyr; do sleep .2; done

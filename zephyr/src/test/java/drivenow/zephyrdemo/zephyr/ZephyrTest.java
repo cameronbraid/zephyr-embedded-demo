@@ -3,11 +3,14 @@ package drivenow.zephyrdemo.zephyr;
 import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Optional;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
+import java.util.Comparator;
 import java.util.Objects;
 
 import org.assertj.core.api.Assertions;
@@ -23,64 +26,68 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class ZephyrTest {
 
-  
   @Test
   public void testEmbddedZephyr() throws Exception {
 
-
     var passedCount = 0;
     var failedCount = 0;
-    for (int i = 0; i < 1; i++) {
+    for (int i = 0; i < 5; i++) {
       File home = Files.createTempDirectory("zephyr").toFile();
 
-      var zephyr = Zephyr.builder()
-      .homeDirectory(home)
-      .create();
-      
-      zephyr.startup();
+      try {
+        var zephyr = Zephyr.builder()
+            .homeDirectory(home)
+            .create();
 
-      var kernel = zephyr.getKernel();
+        zephyr.startup();
 
-      AtomicBoolean failed = new AtomicBoolean(false);
-      CountDownLatch l = new CountDownLatch(1);
-      zephyr.getKernel().addEventListener((type,event) -> {
-        failed.set(true);
-        // System.out.println(type);
-        // System.out.println(        event.getClass()
-        // System.out.println(event.getTarget());
-        l.countDown();
-      },  ModuleEvents.INSTALL_FAILED, ModuleEvents.RESOLUTION_FAILED, ModuleEvents.START_FAILED);
+        var kernel = zephyr.getKernel();
 
-      zephyr.getKernel().addEventListener((type,event) -> {
-        l.countDown();
-      },  ModuleEvents.STARTED);
+        AtomicBoolean failed = new AtomicBoolean(false);
+        CountDownLatch l = new CountDownLatch(2);
+        zephyr.getKernel().addEventListener((type, event) -> {
+          failed.set(true);
+          // System.out.println(type);
+          // System.out.println( event.getClass()
+          // System.out.println(event.getTarget());
+          l.countDown();
+        }, ModuleEvents.INSTALL_FAILED, ModuleEvents.RESOLUTION_FAILED, ModuleEvents.START_FAILED);
 
-      // cater for differing cwd : vsode in '/zephyr' and mvn in '/'
-      var path = new File("zephyr/target/plugins/").exists() ? "zephyr/target/plugins/" : "target/plugins/"; 
+        zephyr.getKernel().addEventListener((type, event) -> {
+          l.countDown();
+          l.countDown();
+        }, ModuleEvents.STARTED);
 
-      // var api = new File(path + "zephyr-embedded-demo-api.war").toURI().toURL();
-      var api = MavenFile.providedPluginJar("drivenow:zephyr-embedded-demo-api:0.0.0").toURI().toURL();
-      var plugin = new File(path + "zephyr-embedded-demo-plugin.war").toURI().toURL();
-      // var jackson = new File("/home/cameronbraid/.m2/repository/drivenow/drivenow-jackson-plugin/1.0.0/drivenow-jackson-plugin-1.0.0.war").toURI().toURL();
+        // cater for differing cwd : vsode in '/zephyr' and mvn in '/'
+        var path = new File("zephyr/target/plugins/").exists() ? "zephyr/target/plugins/" : "target/plugins/";
 
-      zephyr.install(api, plugin);
+        // var api = new File(path + "zephyr-embedded-demo-api.war").toURI().toURL();
+        var api = MavenFile.providedPluginJar("drivenow:zephyr-embedded-demo-api:0.0.0").toURI().toURL();
+        var plugin = new File(path + "zephyr-embedded-demo-plugin.war").toURI().toURL();
+        // var jackson = new
+        // File("/home/cameronbraid/.m2/repository/drivenow/drivenow-jackson-plugin/1.0.0/drivenow-jackson-plugin-1.0.0.war").toURI().toURL();
 
-      var plugins = zephyr.getPluginCoordinates().stream().map(c->c.toCanonicalForm()).collect(Collectors.toList());
-      
-      zephyr.start(plugins);
+        zephyr.install(api, plugin);
 
-      l.await();
+        var plugins = zephyr.getPluginCoordinates().stream().map(c -> c.toCanonicalForm()).collect(Collectors.toList());
 
-      if (failed.get()) {
-        failedCount++;
-      }
-      else {
-        passedCount++;
+        zephyr.start(plugins);
 
+        l.await();
 
-        var sr = zephyrServiceRef(kernel, PluginApi.class, Optional.empty());
+        if (failed.get()) {
+          failedCount++;
+        } else {
+          passedCount++;
 
-        Assertions.assertThat(sr.orElseThrow().getDefinition().get().concat("a","b")).isEqualTo("ab");
+          var sr = zephyrServiceRef(kernel, PluginApi.class, Optional.empty());
+
+          Assertions.assertThat(sr.orElseThrow().getDefinition().get().concat("a", "b")).isEqualTo("ab");
+        }
+
+        zephyr.shutdown();
+      } finally {
+        deleteDirectory(home);
       }
 
     }
@@ -90,35 +97,39 @@ public class ZephyrTest {
       fail();
     }
 
-
-
-
-
   }
 
-
-
-  private static <P> Optional<ServiceReference<P>> zephyrServiceRef(Kernel kernel, Class<P> serviceClass, Optional<String> pluginName) {
+  private static <P> Optional<ServiceReference<P>> zephyrServiceRef(Kernel kernel, Class<P> serviceClass,
+      Optional<String> pluginName) {
 
     return kernel.getModuleManager().getModules()
-    .stream()
-    .map(module->{
+        .stream()
+        .map(module -> {
 
-      var r = kernel.getServiceRegistry().getRegistrations(module);
-      if (r == null) return null;
-      return r.getRegistrations().stream()
-      .filter(sr->{
+          var r = kernel.getServiceRegistry().getRegistrations(module);
+          if (r == null)
+            return null;
+          return r.getRegistrations().stream()
+              .filter(sr -> {
 
-        return sr.getReference().getDefinition().getType().getName().equals(serviceClass.getName());
-        
-      })
-      .filter(sr->pluginName.isEmpty() ? true : sr.getReference().getModule().getCoordinate().getName().equals(pluginName.get()))
-      .map(sr->(ServiceReference<P>)sr.getReference())
-      .findFirst()
-      .orElse(null);
-    })
-    .filter(Objects::nonNull)
-    .findFirst();
+                return sr.getReference().getDefinition().getType().getName().equals(serviceClass.getName());
+
+              })
+              .filter(sr -> pluginName.isEmpty() ? true
+                  : sr.getReference().getModule().getCoordinate().getName().equals(pluginName.get()))
+              .map(sr -> (ServiceReference<P>) sr.getReference())
+              .findFirst()
+              .orElse(null);
+        })
+        .filter(Objects::nonNull)
+        .findFirst();
   }
- 
+
+  void deleteDirectory(File directoryToBeDeleted) throws IOException {
+    Files.walk(directoryToBeDeleted.toPath())
+    .sorted(Comparator.reverseOrder())
+    .map(Path::toFile)
+    .forEach(File::delete);
+  }
+
 }
