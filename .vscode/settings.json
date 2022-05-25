@@ -1,0 +1,16 @@
+{
+  "java.configuration.updateBuildConfiguration": "automatic",
+  "java.test.config": [
+    {
+      "name": "java17",
+      "workingDirectory": "${workspaceFoFmavenlder}",
+      "vmArgs": [
+        "-Duser.language=en",
+        "-Duser.country=US",
+        "-Djava.security.egd=file:/dev/./urandom",
+      ],
+    }
+  ],
+  "java.test.defaultConfig": "java17",
+
+}

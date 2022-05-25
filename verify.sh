@@ -1,0 +1,1 @@
+mvn clean install -pl .,zephyr-bom,api,plugin && mvn test -pl zephyr

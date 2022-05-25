@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <artifactId>zephyr-embedded-demo-zephyr</artifactId>
+  <name>zephyr-embedded-demo-zephyr</name>
+  <version>0.0.0</version>
+  <parent>
+    <artifactId>zephyr-embedded-demo</artifactId>
+    <groupId>drivenow</groupId>
+    <version>0.0.0</version>
+  </parent>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <version>3.2.0</version>
+        <executions>
+          <execution>
+            <id>copy</id>
+            <phase>compile</phase>
+            <goals>
+              <goal>copy</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <artifactItems>
+            <artifactItem>
+              <groupId>${project.groupId}</groupId>
+              <artifactId>zephyr-embedded-demo-api</artifactId>
+              <version>${project.version}</version>
+              <type>war</type>
+              <overWrite>true</overWrite>
+              <outputDirectory>${project.build.directory}/plugins</outputDirectory>
+            </artifactItem>
+            <artifactItem>
+              <groupId>${project.groupId}</groupId>
+              <artifactId>zephyr-embedded-demo-plugin</artifactId>
+              <version>${project.version}</version>
+              <type>war</type>
+              <overWrite>true</overWrite>
+              <outputDirectory>${project.build.directory}/plugins</outputDirectory>
+            </artifactItem>
+          </artifactItems>
+          <overWriteReleases>true</overWriteReleases>
+          <overWriteSnapshots>true</overWriteSnapshots>
+          <stripVersion>true</stripVersion>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.8.1</version>
+        <configuration combine.self="override">
+          <release>${java.version}</release>
+          <compilerArgs>
+            <!--<arg>enable-preview</arg>-->
+          </compilerArgs>
+          <annotationProcessorPaths>
+            <path>
+              <groupId>org.projectlombok</groupId>
+              <artifactId>lombok</artifactId>
+              <version>1.18.24</version>
+            </path>
+          </annotationProcessorPaths>
+        </configuration>
+
+
+      </plugin>
+
+
+
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-surefire-plugin</artifactId>
+          <version>2.22.2</version>
+          <configuration>
+            <!-- needed to allow zephyr tests to work otherwise an error happens -->
+            <fork>true</fork>
+            <forkCount>1</forkCount>
+            <reuseForks>false</reuseForks>
+            <!-- enable-preview -->
+            <argLine>
+                -Duser.language=en
+                -Duser.country=US
+                -Djava.security.egd=file:/dev/./urandom
+            </argLine>
+            <includes>
+              <include>**/*Test.java</include>
+            </includes>
+          </configuration>
+        </plugin>
+
+    </plugins>
+  </build>
+  <dependencies>
+
+
+    <dependency>
+      <groupId>org.projectlombok</groupId>
+      <artifactId>lombok</artifactId>
+      <version>1.18.24</version>
+  		<scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>drivenow</groupId>
+      <artifactId>zephyr-embedded-demo-zephyr-bom</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-engine</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.junit.platform</groupId>
+      <artifactId>junit-platform-runner</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.junit.platform</groupId>
+      <artifactId>junit-platform-console-standalone</artifactId>
+      <version>1.7.2</version>
+      <scope>test</scope>
+    </dependency>
+
+
+  </dependencies>
+
+  <dependencyManagement>
+    <dependencies>
+
+
+      <dependency>
+        <groupId>org.junit</groupId>
+        <artifactId>junit-bom</artifactId>
+        <version>5.7.2</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+
+      <dependency>
+        <groupId>org.springframework.data</groupId>
+        <artifactId>spring-data-bom</artifactId>
+        <version>2021.0.4</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+
+      <dependency>
+        <!-- Import dependency management from Spring Boot -->
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-dependencies</artifactId>
+        <version>${spring-boot.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+
+    </dependencies>
+  </dependencyManagement>
+
+</project>

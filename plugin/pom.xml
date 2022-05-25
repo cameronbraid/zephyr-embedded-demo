@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <name>zephyr-embedded-demo-plugin</name>
+  <artifactId>zephyr-embedded-demo-plugin</artifactId>
+  <version>0.0.0</version>
+  <packaging>jar</packaging>
+  <parent>
+    <artifactId>zephyr-embedded-demo</artifactId>
+    <groupId>drivenow</groupId>
+    <version>0.0.0</version>
+  </parent>
+  <properties>
+    <maven-resolver.version>1.7.2</maven-resolver.version>
+    <mavenVersion>3.8.1</mavenVersion>
+    <slf4j.version>1.7.30</slf4j.version>
+  </properties>
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.8.1</version>
+        <configuration combine.self="override">
+          <release>${java.version}</release>
+          <compilerArgs>
+            <!--<arg>enable-preview</arg>-->
+          </compilerArgs>
+          <annotationProcessorPaths>
+            <path>
+              <groupId>org.projectlombok</groupId>
+              <artifactId>lombok</artifactId>
+              <version>1.18.24</version>
+            </path>
+          </annotationProcessorPaths>
+        </configuration>
+
+      </plugin>
+
+
+
+      <plugin>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <version>3.3.0</version>
+        <configuration>
+          <finalName>plugins/${project.artifactId}</finalName>
+          <descriptors>
+            <descriptor>../assembly/war.xml</descriptor>
+          </descriptors>
+          <archive>
+            <manifestEntries>
+              <name>${project.artifactId}</name>
+              <group>${project.groupId}</group>
+              <version>${project.version}</version>
+              <description>${project.name}</description>
+              <type>plugin</type>
+              <dependencies>service@drivenow:zephyr-embedded-demo-api:${project.version}</dependencies>
+            </manifestEntries>
+          </archive>
+          <appendAssemblyId>false</appendAssemblyId>
+        </configuration>
+        <executions>
+          <execution>
+            <id>make-assembly</id>
+            <phase>package</phase>
+            <goals>
+              <goal>single</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+
+  </build>
+
+  <dependencies>
+
+    <dependency>
+      <groupId>io.sunshower.zephyr</groupId>
+      <artifactId>kernel-api</artifactId>
+      <version>${zephyr.version}</version>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>drivenow</groupId>
+      <artifactId>zephyr-embedded-demo-api</artifactId>
+      <version>${project.version}</version>
+      <scope>provided</scope>
+    </dependency>
+
+  </dependencies>
+
+  <dependencyManagement>
+    <dependencies>
+     
+      <dependency>
+        <groupId>org.springframework.data</groupId>
+        <artifactId>spring-data-bom</artifactId>
+        <version>2021.0.4</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+
+      <dependency>
+        <!-- Import dependency management from Spring Boot -->
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-dependencies</artifactId>
+        <version>${spring-boot.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+
+    </dependencies>
+  </dependencyManagement>
+  
+</project>
