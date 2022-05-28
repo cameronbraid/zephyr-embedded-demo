@@ -9,9 +9,9 @@
     <groupId>drivenow</groupId>
     <artifactId>zephyr-embedded-demo</artifactId>
     <version>0.0.0</version>
+    <relativePath>../pom.xml</relativePath>
   </parent>
   <properties>
-    <zephyr.version>2.0.121.Final</zephyr.version>
     <arcus.version>1.41.40.Final</arcus.version>
     <dagger.version>2.24</dagger.version>
     <mvel.version>2.4.5.Final</mvel.version>

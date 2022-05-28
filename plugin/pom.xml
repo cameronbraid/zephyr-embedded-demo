@@ -9,6 +9,7 @@
     <artifactId>zephyr-embedded-demo</artifactId>
     <groupId>drivenow</groupId>
     <version>0.0.0</version>
+    <relativePath>../pom.xml</relativePath>
   </parent>
   <properties>
     <maven-resolver.version>1.7.2</maven-resolver.version>

@@ -14,6 +14,7 @@ import java.util.Comparator;
 import java.util.Objects;
 
 import org.assertj.core.api.Assertions;
+import org.awaitility.Awaitility;
 import org.junit.Test;
 
 import drivenow.zephyrdemo.pluginapi.PluginApi;
@@ -80,8 +81,9 @@ public class ZephyrTest {
         } else {
           passedCount++;
 
-          var sr = zephyrServiceRef(kernel, PluginApi.class, Optional.empty());
+          Awaitility.await().pollInSameThread().until(()->zephyrServiceRef(kernel, PluginApi.class, Optional.empty()).isPresent());
 
+          var sr = zephyrServiceRef(kernel, PluginApi.class, Optional.empty());
           Assertions.assertThat(sr.orElseThrow().getDefinition().get().concat("a", "b")).isEqualTo("ab");
         }
 
@@ -102,27 +104,29 @@ public class ZephyrTest {
   private static <P> Optional<ServiceReference<P>> zephyrServiceRef(Kernel kernel, Class<P> serviceClass,
       Optional<String> pluginName) {
 
-    return kernel.getModuleManager().getModules()
-        .stream()
-        .map(module -> {
 
-          var r = kernel.getServiceRegistry().getRegistrations(module);
-          if (r == null)
-            return null;
-          return r.getRegistrations().stream()
-              .filter(sr -> {
+      return kernel.getModuleManager().getModules()
+          .stream()
+          .map(module -> {
 
-                return sr.getReference().getDefinition().getType().getName().equals(serviceClass.getName());
+            var r = kernel.getServiceRegistry().getRegistrations(module);
+            if (r == null)
+              return null;
+            return r.getRegistrations().stream()
+                .filter(sr -> {
 
-              })
-              .filter(sr -> pluginName.isEmpty() ? true
-                  : sr.getReference().getModule().getCoordinate().getName().equals(pluginName.get()))
-              .map(sr -> (ServiceReference<P>) sr.getReference())
-              .findFirst()
-              .orElse(null);
-        })
-        .filter(Objects::nonNull)
-        .findFirst();
+                  return sr.getReference().getDefinition().getType().getName().equals(serviceClass.getName());
+
+                })
+                .filter(sr -> pluginName.isEmpty() ? true
+                    : sr.getReference().getModule().getCoordinate().getName().equals(pluginName.get()))
+                .map(sr -> (ServiceReference<P>) sr.getReference())
+                .findFirst()
+                .orElse(null);
+          })
+          .filter(Objects::nonNull)
+          .findFirst();
+        
   }
 
   void deleteDirectory(File directoryToBeDeleted) throws IOException {

@@ -1,9 +1,9 @@
 <factorypath>
     <factorypathentry kind="VARJAR" id="M2_REPO/org/projectlombok/lombok/1.18.16/lombok-1.18.16.jar" enabled="true" runInBatchMode="false"/>
-    <factorypathentry kind="VARJAR" id="M2_REPO/io/sunshower/zephyr/synchronous-api/2.0.121.Final/synchronous-api-2.0.121.Final.jar" enabled="true" runInBatchMode="false"/>
-    <factorypathentry kind="VARJAR" id="M2_REPO/io/sunshower/zephyr/kernel-api/2.0.121.Final/kernel-api-2.0.121.Final.jar" enabled="true" runInBatchMode="false"/>
-    <factorypathentry kind="VARJAR" id="M2_REPO/io/sunshower/zephyr/kernel-core/2.0.121.Final/kernel-core-2.0.121.Final.jar" enabled="true" runInBatchMode="false"/>
-    <factorypathentry kind="VARJAR" id="M2_REPO/io/sunshower/zephyr/kernel-lib/2.0.121.Final/kernel-lib-2.0.121.Final.jar" enabled="true" runInBatchMode="false"/>
+    <factorypathentry kind="VARJAR" id="M2_REPO/io/sunshower/zephyr/synchronous-api/2.0.126.Final/synchronous-api-2.0.126.Final.jar" enabled="true" runInBatchMode="false"/>
+    <factorypathentry kind="VARJAR" id="M2_REPO/io/sunshower/zephyr/kernel-api/2.0.126.Final/kernel-api-2.0.126.Final.jar" enabled="true" runInBatchMode="false"/>
+    <factorypathentry kind="VARJAR" id="M2_REPO/io/sunshower/zephyr/kernel-core/2.0.126.Final/kernel-core-2.0.126.Final.jar" enabled="true" runInBatchMode="false"/>
+    <factorypathentry kind="VARJAR" id="M2_REPO/io/sunshower/zephyr/kernel-lib/2.0.126.Final/kernel-lib-2.0.126.Final.jar" enabled="true" runInBatchMode="false"/>
     <factorypathentry kind="VARJAR" id="M2_REPO/com/vdurmont/semver4j/3.1.0/semver4j-3.1.0.jar" enabled="true" runInBatchMode="false"/>
     <factorypathentry kind="VARJAR" id="M2_REPO/io/sunshower/arcus/gyre-api/1.41.40.Final/gyre-api-1.41.40.Final.jar" enabled="true" runInBatchMode="false"/>
     <factorypathentry kind="VARJAR" id="M2_REPO/io/sunshower/arcus/arcus-lang/1.41.40.Final/arcus-lang-1.41.40.Final.jar" enabled="true" runInBatchMode="false"/>
